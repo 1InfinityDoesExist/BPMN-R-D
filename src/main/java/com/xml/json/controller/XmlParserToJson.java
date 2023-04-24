@@ -31,8 +31,6 @@ public class XmlParserToJson {
   public ResponseEntity<?> XmlParserToJson(@RequestBody Map<String, Object> xmlStr)
       throws JsonMappingException, JsonProcessingException, ParseException {
 
-    // log.info("-----xmlStr : {}", xmlStr);
-    // JSONObject jsonOjbect = xmlToJson(xmlStr);
     Map<String, Object> flattenedJson =
         new JsonFlattener(new ObjectMapper().writeValueAsString(xmlStr)).flattenAsMap();
     log.info("-----flattenedJson : {}", flattenedJson);
@@ -78,7 +76,6 @@ public class XmlParserToJson {
       return x.contains(":");
     }).map(str -> str.split(":"))
         .collect(Collectors.toMap(arr -> arr[0].trim(), arr -> arr[1].trim()));
-
 
     String unFlattenedJsonString =
         new JsonUnflattener(new ObjectMapper().writeValueAsString(finalPayload)).unflatten();
