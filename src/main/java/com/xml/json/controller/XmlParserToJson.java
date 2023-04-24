@@ -22,10 +22,10 @@ import com.github.wnameless.json.flattener.JsonFlattener;
 import com.github.wnameless.json.unflattener.JsonUnflattener;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 @RestController
 public class XmlParserToJson {
-
 
   @PostMapping(value = "/xml")
   public ResponseEntity<?> XmlParserToJson(@RequestBody Map<String, Object> xmlStr)
@@ -55,16 +55,20 @@ public class XmlParserToJson {
   }
 
 
-  public JSONObject xmlToJson(String xmlStr)
-      throws JsonMappingException, JsonProcessingException, ParseException {
+
+  @PostMapping(value = "/xmltojson", consumes = "application/xml", produces = "application/json")
+  public ResponseEntity<?> xmlToJson(@RequestBody String xmlStr) throws Exception {
+
     XmlMapper xmlMapper = new XmlMapper();
+    log.info("------String xmlStr : {}", xmlStr);
     Object obj = xmlMapper.readValue(xmlStr, Object.class);
+    log.info("------Object obj : {}", obj);
     ObjectMapper jsonMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     String jsonStr = jsonMapper.writeValueAsString(obj);
-    return (JSONObject) new JSONParser().parse(jsonStr);
+    log.info("-----JsonString : {}", jsonStr);
+
+    return ResponseEntity.status(HttpStatus.OK).body((JSONObject) new JSONParser().parse(jsonStr));
   }
-
-
 
   @PostMapping("/actual-payload")
   public ResponseEntity<?> getActualPayload(@RequestBody List<String> payload)
