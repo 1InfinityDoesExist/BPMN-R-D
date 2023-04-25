@@ -1,8 +1,11 @@
 package com.xml.json.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -72,7 +75,14 @@ public class XmlParserToJson {
   public ResponseEntity<?> getActualPayload(@RequestBody List<String> payload)
       throws JsonProcessingException, ParseException {
 
-    Map<String, Object> finalPayload = payload.parallelStream().filter(x -> {
+    Set<String> pp = new HashSet<String>();
+    payload.stream().map(str -> str.split(",")).collect(Collectors.toList()).stream()
+        .forEach(strList -> {
+          pp.addAll(Arrays.stream(strList).distinct().collect(Collectors.toList()));
+        });
+
+
+    Map<String, Object> finalPayload = pp.parallelStream().filter(x -> {
       return x.contains(":");
     }).map(str -> str.split(":"))
         .collect(Collectors.toMap(arr -> arr[0].trim(), arr -> arr[1].trim()));
